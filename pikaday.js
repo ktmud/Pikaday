@@ -1045,7 +1045,7 @@
             var _renderTitle = opts.renderTitle || renderTitle;
 
             for (var c = 0; c < opts.numberOfMonths; c++) {
-                randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 2);
+                randId = 'pika-title-' + Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 4);
                 html += '<div class="pika-lendar">' + _renderTitle(this, c, this.calendars[c].year, this.calendars[c].month, this.calendars[0].year, randId) + this.render(this.calendars[c].year, this.calendars[c].month, randId) + '</div>';
             }
 
