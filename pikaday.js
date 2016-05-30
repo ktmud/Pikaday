@@ -831,6 +831,14 @@
         {
             var newCalendar = true;
 
+            // this function becomes obsolete when we want to show all months,
+            // thus we exit very early. all month ranges are already adjusted when setting
+            // max & min dates.
+            if (this._canShowAllMonths()) {
+                this.adjustCalendars();
+                return;
+            }
+
             if (!isDate(date)) {
                 return;
             }
@@ -884,12 +892,14 @@
 
         adjustCalendars: function() {
             this.calendars[0] = adjustCalendar(this.calendars[0]);
+
             for (var c = 1; c < this._o.numberOfMonths; c++) {
                 this.calendars[c] = adjustCalendar({
                     month: this.calendars[0].month + c,
                     year: this.calendars[0].year
                 });
             }
+
             this.draw();
         },
 
@@ -949,7 +959,7 @@
                 this._o.startRange = defaults.startRange;
             }
 
-            this.draw();
+            this._updateMinMax();
         },
 
         /**
@@ -969,7 +979,7 @@
                 this._o.endRange = defaults.endRange;
             }
 
-            this.draw();
+            this._updateMinMax();
         },
 
         setStartRange: function(value)
@@ -980,6 +990,27 @@
         setEndRange: function(value)
         {
             this._o.endRange = value;
+        },
+
+        _canShowAllMonths: function() {
+            return this._o.showAllMonths && isDate(this._o.minDate) && isDate(this._o.maxDate);
+        },
+
+        /**
+         * What to do upon minDate & maxDate update.
+         */
+        _updateMinMax: function() {
+            // update number of months based on the date range if "showAllMonths" is set to be true
+            if (this._canShowAllMonths()) {
+                this._o.numberOfMonths = (this._o.maxYear - this._o.minYear) * 12 + (this._o.maxMonth - this._o.minMonth) + 1;
+                this.calendars = [{
+                    month: this._o.minDate.getMonth(),
+                    year: this._o.minDate.getFullYear()
+                }];
+                this.adjustCalendars();
+            } else {
+                this.draw();
+            }
         },
 
         /**
